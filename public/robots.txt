@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://stripe-mcp.com/sitemap.xml
+Sitemap: https://stripe-mcp.vercel.app/sitemap.xml
