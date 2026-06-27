@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = process.env.SITE_URL || "https://github.com/guillaumeCode2012/stripe-mcp";
+const SITE_URL = process.env.SITE_URL || "https://stripe-mcp.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

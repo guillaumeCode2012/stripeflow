@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "stripe-mcp — The most complete MCP server for Stripe",
     description:
       "79 tools. 19 categories. One command. Manage your entire Stripe account with natural language. Works with Claude, Cursor, Windsurf.",
-    url: "https://github.com/guillaumeCode2012/stripe-mcp",
+    url: "https://stripe-mcp.vercel.app",
     siteName: "stripe-mcp",
     type: "website",
   },
