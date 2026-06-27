@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, useReducedMotion, useInView, type Variants } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, useInView, type Variants } from "framer-motion";
 import {
   Zap,
   Search,
@@ -219,6 +219,7 @@ function Reveal({
       viewport={{ once: true, margin: "-80px" }}
       variants={variants}
       className={className}
+      layout={false}
     >
       {children}
     </Comp>
@@ -463,6 +464,7 @@ function HeroTerminal() {
             initial={{ opacity: 0, y: 8 }}
             animate={done || reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
             transition={{ duration: 0.4 }}
+            layout={false}
             className="flex items-start gap-2.5"
           >
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-emerald-500 text-white">
@@ -1694,28 +1696,35 @@ function Playground() {
 
             {/* Body */}
             <div className="min-h-[420px] flex-1 overflow-y-auto p-4 smcp-scrollbar">
-              {loading ? (
-                <motion.div
-                  key={`loading-${runToken}-${activeId}`}
-                  initial={reduce ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex h-full flex-col items-center justify-center gap-3 py-16 text-center"
-                >
-                  <Loader2 className="h-8 w-8 animate-spin text-violet-300" />
-                  <p className="text-sm text-zinc-300">stripe-mcp is thinking…</p>
-                  <p className="text-[11px] text-zinc-500">calling {active.tool.split(" ")[0]}…</p>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={`response-${runToken}-${activeId}`}
-                  initial={reduce ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {active.render()}
-                </motion.div>
-              )}
+              <AnimatePresence mode="wait">
+                {loading ? (
+                  <motion.div
+                    key={`loading-${runToken}-${activeId}`}
+                    initial={reduce ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={reduce ? undefined : { opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    layout={false}
+                    className="flex h-full flex-col items-center justify-center gap-3 py-16 text-center"
+                  >
+                    <Loader2 className="h-8 w-8 animate-spin text-violet-300" />
+                    <p className="text-sm text-zinc-300">stripe-mcp is thinking…</p>
+                    <p className="text-[11px] text-zinc-500">calling {active.tool.split(" ")[0]}…</p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={`response-${runToken}-${activeId}`}
+                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? undefined : { opacity: 0, y: -8 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    layout={false}
+                  >
+                    {active.render()}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             </div>
 
             {/* Footer */}
