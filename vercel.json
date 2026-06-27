@@ -1,0 +1,7 @@
+{
+  "buildCommand": "bun install && bun run build",
+  "installCommand": "bun install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude)stripe-mcp'"
+}
