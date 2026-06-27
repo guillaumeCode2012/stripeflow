@@ -18,8 +18,8 @@
 ![MIT license](https://img.shields.io/badge/license-MIT-green)
 ![MCP Compatible](https://img.shields.io/badge/MCP-compatible-purple)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)
-![Build Status](https://img.shields.io/github/actions/workflow/status/stripe-mcp/stripe-mcp/ci.yml?branch=main&label=CI)
-![Stars](https://img.shields.io/github/stars/stripe-mcp/stripe-mcp?style=social)
+![Build Status](https://img.shields.io/github/actions/workflow/status/guillaumeCode2012/stripe-mcp/ci.yml?branch=main&label=CI)
+![Stars](https://img.shields.io/github/stars/guillaumeCode2012/stripe-mcp?style=social)
 
 **Manage your entire Stripe account — customers, subscriptions, invoices, and analytics — with natural language. 79 tools. One command. Works with Claude Desktop, Cursor, and Windsurf.**
 
@@ -390,7 +390,7 @@ See [`DECISIONS.md`](./DECISIONS.md) for the why behind each of these.
 ## Development
 
 ```bash
-git clone https://github.com/stripe-mcp/stripe-mcp.git
+git clone https://github.com/guillaumeCode2012/stripe-mcp.git
 cd stripe-mcp
 npm install
 npm run build

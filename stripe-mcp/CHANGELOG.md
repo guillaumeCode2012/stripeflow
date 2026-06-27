@@ -119,4 +119,4 @@ implement the canonical Baremetrics/ChartMogul methodology themselves.
   with > 50,000 charges; cap defaults bound the work
 - API version is intentionally not pinned — see `DECISIONS.md` 008
 
-[1.0.0]: https://github.com/stripe-mcp/stripe-mcp/releases/tag/v1.0.0
+[1.0.0]: https://github.com/guillaumeCode2012/stripe-mcp/releases/tag/v1.0.0

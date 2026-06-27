@@ -54,6 +54,6 @@ HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
 
 LABEL org.opencontainers.image.title="stripe-mcp" \
       org.opencontainers.image.description="The most complete MCP server for Stripe" \
-      org.opencontainers.image.source="https://github.com/stripe-mcp/stripe-mcp" \
+      org.opencontainers.image.source="https://github.com/guillaumeCode2012/stripe-mcp" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version="1.0.0"

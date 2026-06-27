@@ -153,7 +153,7 @@ MODE
   Current key prefix: ${config.stripeMode === 'live' ? 'sk_live_ (LIVE — real money)' : 'sk_test_ (test — safe)'}
 
 DOCS
-  README    https://github.com/stripe-mcp/stripe-mcp#readme
+  README    https://github.com/guillaumeCode2012/stripe-mcp#readme
   Stripe    https://stripe.com/docs/api
   MCP       https://modelcontextprotocol.io
 

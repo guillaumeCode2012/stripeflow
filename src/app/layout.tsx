@@ -30,13 +30,13 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "stripe-mcp contributors" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
     title: "stripe-mcp — The most complete MCP server for Stripe",
     description:
       "79 tools. 19 categories. One command. Manage your entire Stripe account with natural language. Works with Claude, Cursor, Windsurf.",
-    url: "https://github.com/stripe-mcp/stripe-mcp",
+    url: "https://github.com/guillaumeCode2012/stripe-mcp",
     siteName: "stripe-mcp",
     type: "website",
   },

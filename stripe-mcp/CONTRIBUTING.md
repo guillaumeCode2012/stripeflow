@@ -13,7 +13,7 @@ Requirements:
 Setup:
 
 ```bash
-git clone https://github.com/stripe-mcp/stripe-mcp.git
+git clone https://github.com/guillaumeCode2012/stripe-mcp.git
 cd stripe-mcp
 npm install
 ```

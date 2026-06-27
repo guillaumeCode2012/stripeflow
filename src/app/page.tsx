@@ -89,7 +89,7 @@ import {
  * Shared primitives
  * ──────────────────────────────────────────────────────────────────────── */
 
-const GITHUB_URL = "https://github.com/stripe-mcp/stripe-mcp";
+const GITHUB_URL = "https://github.com/guillaumeCode2012/stripe-mcp";
 const NPM_CMD = "npm install -g stripe-mcp";
 
 function cn(...classes: Array<string | false | null | undefined>) {
