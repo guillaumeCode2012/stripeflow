@@ -206,14 +206,9 @@ function Reveal({
   className?: string;
   as?: "div" | "li" | "span";
 }) {
-  const [reduce, setReduce] = React.useState(false);
-  const fmReduce = useReducedMotion();
-  React.useEffect(() => {
-    setReduce(fmReduce ?? false);
-  }, [fmReduce]);
   const Comp = motion[as] as typeof motion.div;
   const variants: Variants = {
-    hidden: { opacity: 0, y: reduce ? 0 : 24 },
+    hidden: { opacity: 0, y: 24 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay } },
   };
   return (
@@ -470,7 +465,7 @@ function HeroTerminal() {
           {/* Assistant response — appears after typing finishes */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
-            animate={done || reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            animate={done ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
             transition={{ duration: 0.4 }}
             layout={false}
             className="flex items-start gap-2.5"
@@ -1716,9 +1711,9 @@ function Playground() {
                 {loading ? (
                   <motion.div
                     key={`loading-${runToken}-${activeId}`}
-                    initial={reduce ? false : { opacity: 0 }}
+                    initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={reduce ? undefined : { opacity: 0 }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     layout={false}
                     className="flex h-full flex-col items-center justify-center gap-3 py-16 text-center"
@@ -1730,9 +1725,9 @@ function Playground() {
                 ) : (
                   <motion.div
                     key={`response-${runToken}-${activeId}`}
-                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={reduce ? undefined : { opacity: 0, y: -8 }}
+                    exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                     layout={false}
                   >
