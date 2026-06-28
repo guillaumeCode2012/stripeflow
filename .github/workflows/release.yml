@@ -24,6 +24,6 @@ jobs:
           cache-dependency-path: stripe-mcp/package-lock.json
       - run: npm ci
       - run: npm run build
-      - run: npm publish
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
