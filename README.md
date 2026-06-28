@@ -38,6 +38,11 @@
 npm install -g @guillaume_code_2012/stripe-mcp
 ```
 
+> **Windows users:** if you get a PowerShell script error, use **CMD** instead:
+> ```cmd
+> cmd /c "npm install -g @guillaume_code_2012/stripe-mcp"
+> ```
+
 **2. Get a Stripe secret key**
 
 Grab a restricted test key from the [Stripe dashboard](https://dashboard.stripe.com/apikeys). It starts with `sk_test_`.
