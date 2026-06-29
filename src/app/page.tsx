@@ -225,7 +225,7 @@ function Reveal({
     return () => observer.disconnect();
   }, []);
 
-  const Tag = as as keyof JSX.IntrinsicElements;
+  const Tag = as as React.ElementType;
   return (
     <Tag
       ref={ref as any}
