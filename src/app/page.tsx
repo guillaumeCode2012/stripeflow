@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import * as React from "react";
-import { motion, useReducedMotion, useInView, type Variants } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import {
   Zap,
   Search,
@@ -194,7 +194,7 @@ function Section({
   );
 }
 
-/** Animated fade-up-on-scroll wrapper. */
+/** Animated fade-up-on-scroll wrapper (CSS only, no Framer Motion). */
 function Reveal({
   children,
   delay = 0,
@@ -206,22 +206,38 @@ function Reveal({
   className?: string;
   as?: "div" | "li" | "span";
 }) {
-  const Comp = motion[as] as typeof motion.div;
-  const variants: Variants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay } },
-  };
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-80px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const Tag = as as keyof JSX.IntrinsicElements;
   return (
-    <Comp
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
-      variants={variants}
+    <Tag
+      ref={ref as any}
       className={className}
-      layout={false}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+      }}
     >
       {children}
-    </Comp>
+    </Tag>
   );
 }
 

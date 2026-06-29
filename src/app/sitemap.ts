@@ -1,6 +1,6 @@
 ﻿import type { MetadataRoute } from "next";
 
-const SITE_URL = process.env.SITE_URL || "https://stripeflow-ecru.vercel.app";
+const SITE_URL = process.env.SITE_URL || "https://stripeflow-mcp.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
