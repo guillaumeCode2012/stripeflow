@@ -3,6 +3,5 @@
   "installCommand": "bun install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude)stripeflow'",
-  "deploymentProtection": false
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude)stripeflow'"
 }
