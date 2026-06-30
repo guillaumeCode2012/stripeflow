@@ -1,59 +1,67 @@
-﻿```
-  ⚡
-  ███████ ███████ ███████ ███████ ███████ ███████ ███████ ███████████
- ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░░░░░███░░░░
- ░███    ░███    ░███    ░███    ░███    ░███    ░███        ░███
- ░███████░██████ ░███████░███████░███████░███████░███████    ░███
- ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░███░░░ ░███░░░     ░███
- ░███    ░███    ░███    ░███    ░███    ░███    ░███        ░███
- ░███████░██████ ███████░███████░███    ░███    ░██████     ░███
- ░░░░░░░ ░░░░░░ ░░░░░░░ ░░░░░░░ ░░░     ░░░     ░░░░░░      ░░░
-```
+﻿# StripeFlow
 
-# StripeFlow
-
-> **The most complete open-source MCP server for Stripe.** 79 tools. 19 categories. One command.
-
-[![CI](https://img.shields.io/github/actions/workflow/status/guillaumeCode2012/stripeflow/ci.yml?branch=main&label=CI)](https://github.com/guillaumeCode2012/stripeflow/actions)
-[![MIT license](https://img.shields.io/badge/license-MIT-green)](./stripeflow/LICENSE)
-[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-purple)](https://modelcontextprotocol.io)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](./stripeflow/tsconfig.json)
-[![Stars](https://img.shields.io/github/stars/guillaumeCode2012/stripeflow?style=social)](https://github.com/guillaumeCode2012/stripeflow)
+AI agents call Stripe APIs blindly. They hallucinate parameters, skip validation, and run destructive operations with no guardrails. StripeFlow gives them typed, scoped, validated tools instead.
 
 ---
 
 ## Why this exists
 
-- **No other Stripe MCP has analytics.** MRR, churn, revenue summaries, top customers, failed-payment reports — all computed client-side. Stripe has no native MRR endpoint; we implemented the canonical Baremetrics/ChartMogul methodology.
-- **One command to install.** `npm install -g @guillaume_code_2012/stripeflow` and you're talking to Stripe from Claude in 30 seconds. No servers, no ports, no auth headers.
-- **Typed end-to-end.** TypeScript strict mode, zod runtime validation on every input, zero `any`. Stripe SDK types flow all the way through.
+Giving an LLM a raw Stripe API key is dangerous. One hallucinated `DELETE /v1/customers` and your production data is gone. StripeFlow wraps every Stripe API operation behind a typed MCP tool with runtime validation, scope awareness, and explicit safety warnings for live-mode keys.
+
+It also computes analytics (MRR, churn, revenue) client-side — Stripe has no native MRR endpoint. No data warehouse. No Sigma. No SQL.
 
 ---
 
-## Quick start
+## What this solves
 
-**1. Install**
+- AI agents calling raw HTTP APIs with no type checking
+- Hallucinated parameters reaching the Stripe API
+- Missing pagination (agents assume one page = all results)
+- No visibility into what an agent did or charged
+- No safe mode for development vs production keys
+- Stripe analytics require external services (Baremetrics, ChartMogul)
+
+---
+
+## Demo
+
+Three operations. One session. No API keys typed manually.
+
+1. **Create a customer** — the agent calls `stripe_customers_create` with name and email. StripeFlow validates the input, returns the customer object with formatted dates and currency.
+
+2. **Create a subscription** — the agent attaches a price to the customer. StripeFlow handles proration, trial periods, and returns the full subscription object.
+
+3. **Refund the last charge** — the agent calls `stripe_refunds_create` with the charge ID. StripeFlow returns a summary before executing, so you can review the operation.
+
+---
+
+## Key features
+
+- **79 typed tools** across 19 Stripe resource categories
+- **Zod validation on every input** — the LLM never sends raw JSON to Stripe
+- **Auto-pagination** — list endpoints iterate through every page up to a configurable cap
+- **Dual currency formatting** — every monetary field returns both raw cents and a human-readable string (`"$12.50"`)
+- **Dual date formatting** — every date field returns both Unix timestamp and ISO 8601
+- **Key type detection** — `sk_test_` shows a safe-mode indicator; `sk_live_` prints a red warning on startup
+- **5 analytics tools** — MRR, churn rate, revenue summary, top customers, failed payments. Computed client-side from Stripe data
+- **Stdio transport** — no HTTP server, no ports, no network. Runs as a child process of your MCP client
+- **83 tests, zero real API calls** — all Stripe interactions mocked with vitest
+
+---
+
+## Installation
 
 ```bash
 npm install -g @guillaume_code_2012/stripeflow
 ```
 
-> **Windows users:** if you get a PowerShell script error, use **CMD** instead:
-> ```cmd
-> cmd /c "npm install -g @guillaume_code_2012/stripeflow"
-> ```
-
-**2. Get a Stripe secret key**
-
-Grab a restricted test key from the [Stripe dashboard](https://dashboard.stripe.com/apikeys). It starts with `sk_test_`.
+Set your Stripe key:
 
 ```bash
 export STRIPE_SECRET_KEY=sk_test_...
 ```
 
-**3. Wire it into your MCP client**
-
-**Claude Desktop** — `claude_desktop_config.json`:
+Add to your MCP client config:
 
 ```json
 {
@@ -66,118 +74,75 @@ export STRIPE_SECRET_KEY=sk_test_...
 }
 ```
 
-**Cursor** — `.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "stripe": {
-      "command": "stripeflow",
-      "env": { "STRIPE_SECRET_KEY": "sk_test_..." }
-    }
-  }
-}
-```
-
-**Windsurf** — `~/.codeium/windsurf/mcp_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "stripe": {
-      "command": "stripeflow",
-      "env": { "STRIPE_SECRET_KEY": "sk_test_..." }
-    }
-  }
-}
-```
+Works with Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
 
 ---
 
-## Tools (79 across 19 categories)
+## Example
 
-| Category | Tools | |
+User prompt: *"Subscribe Sarah to the Pro plan and charge her card."*
+
+The AI agent calls these StripeFlow tools in sequence:
+
+```
+stripe_customers_search    → find sarah@acme.io
+stripe_prices_list         → get the Pro plan price ID
+stripe_subscriptions_create → subscribe cus_xxx to price_xxx
+```
+
+Each call is type-checked. The agent never touches a raw Stripe endpoint. If the customer doesn't exist, the search returns an empty list instead of a 404 the agent would misinterpret.
+
+---
+
+## Why MCP
+
+MCP (Model Context Protocol) is a standard for AI agents to call external tools. Instead of parsing raw HTTP responses and guessing at pagination, the agent calls a typed function with a JSON schema. The server validates inputs, handles errors, and returns structured data.
+
+StripeFlow implements the MCP server spec over stdio. Your AI client spawns it as a child process and communicates via JSON-RPC on stdin/stdout. No network config. No OAuth dance. No token management beyond the Stripe key you already have.
+
+---
+
+## Tools
+
+| Category | Count | Operations |
 |---|---|---|
-| **Customers** | create, get, update, delete, list, search | 6 |
-| **Products** | create, get, update, archive, list | 5 |
-| **Prices** | create, get, update, list | 4 |
-| **Subscriptions** | create, get, update, cancel, pause, resume, list, search | 8 |
-| **Invoices** | get, list, pay, void, finalize, send | 6 |
-| **Payment Intents** | create, get, confirm, cancel, list | 5 |
-| **Refunds** | create, get, list | 3 |
-| **Disputes** | get, update, close, list | 4 |
-| **Webhooks** | create, get, update, delete, list | 5 |
-| **Coupons** | create, get, delete, list | 4 |
-| **Promotion Codes** | create, get, list | 3 |
-| **Payment Links** | create, get, update, list | 4 |
-| **Checkout** | create, get, expire, list sessions | 4 |
-| **Billing Portal** | create session | 1 |
-| **Balance** | get, list transactions | 2 |
-| **Payouts** | create, get, cancel, list | 4 |
-| **Tax** | create, get, list rates | 3 |
-| **Meters** | create, get, list | 3 |
-| **Analytics** | MRR, churn rate, revenue summary, top customers, failed payments | 5 |
-| **Total** | | **79** |
-
-### Analytics (the crown jewel)
-
-Stripe has no native MRR endpoint. StripeFlow computes MRR, churn, revenue, top customers, and failed-payment reports entirely client-side by paginating Stripe resources — the same methodology used by Baremetrics and ChartMogul.
+| Customers | 6 | create, get, update, delete, list, search |
+| Products | 5 | create, get, update, archive, list |
+| Prices | 4 | create, get, update, list |
+| Subscriptions | 8 | create, get, update, cancel, pause, resume, list, search |
+| Invoices | 6 | get, list, pay, void, finalize, send |
+| Payment Intents | 5 | create, get, confirm, cancel, list |
+| Refunds | 3 | create, get, list |
+| Disputes | 4 | get, update, close, list |
+| Webhooks | 5 | create, get, update, delete, list |
+| Coupons | 4 | create, get, delete, list |
+| Promotion Codes | 3 | create, get, list |
+| Payment Links | 4 | create, get, update, list |
+| Checkout | 4 | create, get, expire, list |
+| Billing Portal | 1 | create session |
+| Balance | 2 | get, list transactions |
+| Payouts | 4 | create, get, cancel, list |
+| Tax | 3 | create, get, list |
+| Meters | 3 | create, get, list |
+| Analytics | 5 | MRR, churn, revenue, top customers, failed payments |
 
 ---
 
-## Example prompts
+## Safety
 
-```
-Show me my current MRR and which plan is growing fastest
-```
-
-```
-List all customers who churned in the last 30 days
-```
-
-```
-Create a $29/month Pro subscription for cus_abc123
-```
-
-```
-What was my revenue last month, and how does it compare to the month before?
-```
-
-```
-Find all failed payments from the last week and suggest recovery actions
-```
-
-```
-Create a 20% off coupon valid for 3 months, then list all active coupons
-```
+- **`sk_test_` keys** — green indicator. No real charges possible.
+- **`sk_live_` keys** — red warning on startup. "LIVE MODE — real money."
+- **`rk_` restricted keys** — recommended for production. Scope by resource and permission.
+- **Destructive tools** — return a confirmation summary before executing. The agent must present it to you.
 
 ---
 
-## Architecture
+## Docker
 
+```bash
+docker build -t stripeflow:1.0.0 ./stripeflow
+docker run --rm -i -e STRIPE_SECRET_KEY=sk_test_... stripeflow:1.0.0
 ```
-stripeflow/
-├── src/
-│   ├── index.ts          # Entry point — StdioServerTransport
-│   ├── server.ts         # createServer() — registers all 79 tools
-│   ├── config.ts         # Stripe client factory + key type detection
-│   ├── cli.ts            # --help, --version, --list-tools, --doctor
-│   ├── doctor.ts         # Health diagnostic (5 checks)
-│   ├── types/            # ToolDefinition, JsonSchemaProperty
-│   ├── utils/            # pagination, currency, date, errors
-│   └── tools/            # 19 category folders, 79 tools
-├── tests/                # Vitest — all Stripe calls mocked
-├── dist/                 # Bundled output (tsup, ESM, Node 20+)
-└── docs/                 # Per-category tool documentation
-```
-
-**Key design decisions** ([DECISIONS.md](./stripeflow/DECISIONS.md)):
-
-- **Stdio only** — no HTTP, no ports, no auth headers. Spawned as a child process by your MCP client.
-- **Zod everywhere** — every input runtime-validated. JSON Schemas mirrored for MCP protocol.
-- **Auto-pagination** — list tools paginate through ALL results. Never a partial page.
-- **Dual formatting** — monetary values returned as both raw cents and human-readable `"$12.50"`. Dates as both Unix timestamp and ISO 8601.
-- **Mocked tests** — zero real Stripe API calls in CI. 83 tests, 100% pass rate.
 
 ---
 
@@ -185,68 +150,15 @@ stripeflow/
 
 ```bash
 git clone https://github.com/guillaumeCode2012/stripeflow.git
-cd stripeflow/StripeFlow
+cd stripeflow/stripeflow
 npm ci
+npm test
 ```
 
-| Command | Does |
-|---|---|
-| `npm test` | Run 83 tests (vitest) |
-| `npm run typecheck` | TypeScript check |
-| `npm run lint` | ESLint |
-| `npm run build` | Build to `dist/` |
-| `npm run dev` | Dev mode with watch |
-
-**Quality gates** (must pass before push):
-1. `npm run typecheck` → zero errors
-2. `npm run lint` → zero warnings
-3. `npm run build` → succeeds
-4. `npm test` → all 83 pass
-5. `node dist/index.js --list-tools` → no errors
-
-See [CONTRIBUTING.md](./stripeflow/CONTRIBUTING.md) for the guide on adding new tools.
-
----
-
-## CI/CD
-
-| Workflow | Trigger | What it does |
-|---|---|---|
-| **CI** | Push/PR to `main` | TypeScript, lint, build, test (Node 20 & 22) |
-| **Release** | Tag `v*` | Build, test, publish to npm |
-
----
-
-## Docker
-
-```bash
-docker build -t StripeFlow:1.0.0 ./StripeFlow
-docker run --rm -i -e STRIPE_SECRET_KEY=sk_test_... StripeFlow:1.0.0
-```
-
-See [Dockerfile](./stripeflow/Dockerfile) and [docker-compose.yml](./stripeflow/docker-compose.yml).
-
----
-
-## Safety
-
-- **`sk_test_`** keys → safe, no real money. Green indicator on startup.
-- **`sk_live_`** keys → prominent red warning: "LIVE MODE — real money."
-- **`rk_`** restricted keys → recommended for production. Scope by resource.
-- **Destructive actions** → always return a summary for human review before execution.
-
----
-
-## FAQ
-
-**Does this require a server?** No. Runs locally via stdio. No ports, no infrastructure.
-
-**Is it safe for production?** Yes. Use a `rk_` restricted key scoped to the resources you need.
-
-**What clients does it work with?** Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
+Quality gates: `npm run typecheck`, `npm run lint`, `npm run build`, `npm test`.
 
 ---
 
 ## License
 
-MIT — see [LICENSE](./stripeflow/LICENSE).
+MIT
