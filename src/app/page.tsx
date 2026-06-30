@@ -577,7 +577,7 @@ function Hero() {
 
             <Reveal delay={0.05}>
               <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
-                The most complete MCP server for <GradientText>Stripe</GradientText>.
+                StripeFlow MCP — the most complete <GradientText>Stripe</GradientText> server for AI agents.
               </h1>
             </Reveal>
 
